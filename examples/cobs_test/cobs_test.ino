@@ -24,7 +24,7 @@ const size_t MESSAGE_SIZE = 64;
 const uint32_t RANDOM_SEED = 1241;
 
 // define if you want to add a trailing zero byte or not
-const bool   ADD_ZERO_BYTE = true;
+const bool ADD_ZERO_BYTE = true;
 
 // A little helper function to print out byte buffers in a readable format:
 // Print HEX numbers with leading zero, separated by space, 16 bytes in a row
@@ -117,7 +117,8 @@ void setup() {
      * 
      * Using this form makes it possible to start reading from and writeing to buffer positions other then 0. 
      */
-    
+
+
     // print results of encoding
     Serial.print("content of cobs_buffer (");
     Serial.print(encoded_size, DEC);
@@ -193,6 +194,7 @@ void setup() {
     else {
         Serial.println("Original message and decoded buffers are NOT identical. This is not good...");
     }
+
 } // end of setup()
 
 // do nothing in loop()
