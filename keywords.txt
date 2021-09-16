@@ -1,3 +1,4 @@
 getCOBSBufferSize	KEYWORD2
 encodeCOBS	KEYWORD2
 decodeCOBS	KEYWORD2
+decodeCOBS_inplace	KEYWORD2
