@@ -2,8 +2,8 @@
  * @file    cobs.h
  * @brief   Header file for the COBS library
  * @author  Andreas Grommek
- * @version 1.0.0
- * @date    2021-05-23
+ * @version  1.1.0 (complete rewrite)
+ * @date     2021-09-16
  * 
  * @section license License
  * 
@@ -43,14 +43,17 @@
 size_t getCOBSBufferSize(size_t input_size,
                          bool   with_trailing_zero=true);
 
-size_t encodeCOBS(uint8_t *input_buffer,
-                  size_t   input_length, 
-                  uint8_t *output_buffer,
-                  size_t   output_buffer_size,
-                  bool     add_trailing_zero=true);
+size_t encodeCOBS(const uint8_t *inptr,
+                   size_t inputlen,
+                   uint8_t *outptr,
+                   size_t outlen, 
+                   bool add_trailing_zero=true);
 
-size_t decodeCOBS(uint8_t *encoded_input, 
-                  size_t   max_input_length,
-                  uint8_t *decoded_output,
-                  size_t   max_output_length);
+size_t decodeCOBS(const uint8_t *inptr,
+                  size_t inputlen,
+                  uint8_t *outptr,
+                  size_t outputlen);
+
+size_t decodeCOBS_inplace(uint8_t *inptr, size_t inputlen);
+
 #endif
