@@ -207,40 +207,45 @@ size_t encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
  *         least twice as fast as endoding.
  */
 size_t decodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t outputlen) {
-    if (inputlen < 2 || outputlen == 0) {
-        return 0;
-    }
-    if ( outputlen < (inputlen - 1)) {
+    // Do some sanity checking:
+    // - COBS-encoded data must be at least 2 bytes long.
+    // - Output buffer size must be at least 1.
+    // - Output buffer size must be able to hold (inputlen-1) bytes of data or more.
+    // (one might get away with less room in output buffer, but we cannot know this beforehand)
+    if (inputlen < 2 || outputlen == 0 || (outputlen < (inputlen - 1))) {
         return 0;
     }
     
-    const uint8_t *outptr_start =  outptr;
-    const uint8_t *last_element = ( inptr[inputlen-1] == 0) ? 
-        inptr + inputlen - 1 : 
-        inptr + inputlen ;
-    
+    const uint8_t *start = outptr;         // needed for length calculation
+    const uint8_t *end = inptr + inputlen; // points to element *after* last element in input buffer
+
     while (true) {
-        // read code
+        // get code
         uint8_t code = *inptr;
-        if (inptr + code > last_element) {
-            code = last_element - inptr;
+        // make sure we do not try to read after specified end of input buffer
+        if (inptr + code > end ) {
+            code = end - inptr;
         }
         inptr++;
-        // copy code-1 number of bytes verbatim from input to output
-        for (uint8_t i=1; i < code; i++) {
+        
+        // copy code-1 bytes from input to output
+        for (uint_fast8_t i=1; i < code; i++) {
             *outptr = *inptr;
             inptr++;
             outptr++;
         }
-        // break when finished
-        if (inptr >= last_element) break;
-        // append 0 if necessary
+        // inptr now points either to...
+        // ...the next non-zero code byte within the input--> ok, continue
+        // ...a zero code byte --> trailing zero or error --> break here
+        // ...after the end of input --> break here
+        if ((inptr >= end) || (*inptr == 0)) break;
+        // append 0x00 after run of less than 254 data bytes
         if (code < 0xFF) {
             *outptr = 0x00;
             outptr++;
         }
-    } // end of while(), decoding complete
-    return static_cast<size_t>(outptr - outptr_start);
+    }
+    return static_cast<size_t>(outptr - start);
 }
 
 /**
@@ -277,34 +282,5 @@ size_t decodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
  *         least twice as fast as endoding.
  */
 size_t decodeCOBS_inplace(uint8_t *inptr, size_t inputlen) {
-    if (inputlen < 2) return 0;
-    
-    uint8_t *outptr = inptr;
-    const uint8_t *outptr_start =  inptr;
-    const uint8_t *last_element = ( inptr[inputlen-1] == 0) ? 
-        inptr + inputlen - 1 : 
-        inptr + inputlen ;
-    
-    while (true) {
-        // read code
-        uint8_t code = *inptr;
-        if (inptr + code > last_element) {
-            code = last_element - inptr;
-        }
-        inptr++;
-        // copy code-1 number of bytes verbatim from input to output
-        for (uint8_t i=1; i < code; i++) {
-            *outptr = *inptr;
-            inptr++;
-            outptr++;
-        }
-        // break when finished
-        if (inptr >= last_element) break;
-        // append 0 if necessary
-        if (code < 0xFF) {
-            *outptr = 0x00;
-            outptr++;
-        }
-    } // end of while(), decoding complete
-    return static_cast<size_t>(outptr - outptr_start);
+    return decodeCOBS(inptr, inputlen, inptr, inputlen);
 }

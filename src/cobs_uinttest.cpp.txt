@@ -153,7 +153,7 @@ int main() {
     uint8_t output11[] = {0x02, 0x45, 0x01, 0x04, 0x2C, 0x4C, 0x79, 0x01, 0x05, 0x40, 0x06, 0x4F, 0x37, 0x00};
     
     /* run tests */
-    
+
     cout << endl << "checking example 1:" << endl;
     compare(input1, sizeof(input1), output1, sizeof(output1)-sub, with_trailing_zero);
 
