@@ -10,7 +10,7 @@ For mor information on the COBS algorithm, take a look at the [original paper](h
 
 ## Overhead
 
-The algorithm introduces an overhead of at least one byte. However, the worst-case-overhead is small an easily calculated beforehand. The worst case overhead is at most one byte for every 254 bytes encoded.
+The algorithm introduces an overhead of at least one byte. However, the worst-case-overhead is small and easily calculated beforehand. The worst case overhead is at most one byte for every 254 bytes encoded.
 
 ## Which platform does it run on?
 

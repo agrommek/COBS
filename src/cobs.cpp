@@ -129,7 +129,6 @@ size_t getCOBSBufferSize(size_t input_size, bool with_trailing_zero) {
  *         an error condition. No data was encoded in this case.
  *         A return value of 0 cannot occurr during normal operation
  *         because COBS adds at least one byte of overhead.
- * @note   Encoding time is more or less proportional to input buffer size.
  */
 size_t encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t outlen, bool add_trailing_zero) {
     if (outlen < getCOBSBufferSize(inputlen, add_trailing_zero)) {
@@ -168,26 +167,22 @@ size_t encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
  *         store the result in @b another buffer.
  * @param  inptr 
  *         Pointer to buffer with COBS encoded bytes to decode. The 
- *         buffer MUST contain a zero byte at the end of the COBS
- *         encoded stream.
+ *         buffer can contain a zero byte at the end of the COBS
+ *         encoded stream. 
  * @param  inputlen
- *         Maximum number of bytes to take from input buffer to encode.
- *         This can be the maximum number of bytes the buffer can hold if
- *         and only if the encoded bytes contain a trailing zero byte as 
- *         delimiter. The COBS algorithm then figures out by itself when 
- *         decoding is finished.
+ *         Maximum number of bytes to take from input buffer to decode.
  *         If the encoded byte stream does not contain a trailing zero
  *         byte as delimiter, this must be the exact number of bytes 
- *         to decode.
+ *         to decode. However, this can be the maximum number of bytes 
+ *         the buffer can hold if (and only if) the encoded bytes contain
+ *         a trailing zero byte as delimiter. The COBS algorithm then 
+ *         figures out by itself when decoding is finished.
  *         However, it is always better to specify the exact number of 
  *         bytes one expects to decode. A malformed code byte in the encoded 
  *         stream might otherwise cause missing the trailing zero byte, resulting
  *         in decoding garbage.
  * @param  outptr
  *         Pointer to buffer into which to write the decoded bytes.
- *         If the size of decoded_output is equal or greater than 
- *         inputlen, the decoding operation is safe, as the
- *         size of decoded output is at least one byte less than the input.
  * @param  outputlen
  *         Maximum number of bytes the output buffer can hold. If this
  *         buffer is too small to hold the worst-case decoded size (i.e.
@@ -195,16 +190,12 @@ size_t encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
  *         written to the output buffer and 0 is returned. 
  * @return Number of bytes written to buffer outptr. 
  *         A number of 0 written bytes signals an error condition.
- * @note   This function does not check, if there really are no zero bytes 
+ * @note   This function does not check if there really are no zero bytes 
  *         within the COBS-encoded blocks (except as delimiter at the end),
  *         i.e. that we have a valid and pure COBS-encode byte stream.
- *         This is a design decision. It is better to decode the whole stream
- *         than only delivering a part of the decoding. At least the decoded 
- *         byte stream will have the expected/correct length (more or less). 
- *         Integrity checking (i.e. hashing, CRCs, etc.) must be performed
- *         afterwards on the decoded bytes, if necessary.
- * @note   Decoding is more or less proportional to message size and at
- *         least twice as fast as endoding.
+ *         This is a design decision. Integrity checking (i.e. hashing,
+ *         CRCs, etc.) must be performed afterwards on the decoded bytes,
+ *         if necessary.
  */
 size_t decodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t outputlen) {
     // Do some sanity checking:
@@ -250,37 +241,35 @@ size_t decodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
 
 /**
  * @brief  Decode a buffer of bytes encoded with the COBS algorithm and 
- *         store the result in the @b same buffer.
+ *         store the result in the @b same buffer. This is possible,
+ *         because the decoded stream is @b always shorter than the 
+ *         endocded stream. 
  * @param  inptr 
  *         Pointer to buffer with COBS encoded bytes to decode. The 
- *         buffer MUST contain a zero byte at the end of the COBS
+ *         buffer can contain a zero byte at the end of the COBS
  *         encoded stream.
  * @param  inputlen
- *         Maximum number of bytes to take from input buffer to encode.
- *         This can be the maximum number of bytes the buffer can hold if
- *         and only if the encoded bytes contain a trailing zero byte as 
- *         delimiter. The COBS algorithm then figures out by itself when 
- *         decoding is finished.
+ *         Maximum number of bytes to take from input buffer to decode.
  *         If the encoded byte stream does not contain a trailing zero
  *         byte as delimiter, this must be the exact number of bytes 
- *         to decode.
+ *         to decode. However, this can be the maximum number of bytes 
+ *         the buffer can hold if (and only if) the encoded bytes contain
+ *         a trailing zero byte as delimiter. The COBS algorithm then 
+ *         figures out by itself when decoding is finished.
  *         However, it is always better to specify the exact number of 
  *         bytes one expects to decode. A malformed code byte in the encoded 
  *         stream might otherwise cause missing the trailing zero byte, resulting
  *         in decoding garbage.
  * @return Number of bytes written back to inptr. 
  *         A number of 0 written bytes signals an error condition.
- * @note   This function does not check, if there really are no zero bytes 
+ * @note   This function does not check if there really are no zero bytes 
  *         within the COBS-encoded blocks (except as delimiter at the end),
  *         i.e. that we have a valid and pure COBS-encode byte stream.
- *         This is a design decision. It is better to decode the whole stream
- *         than only delivering a part of the decoding. At least the decoded 
- *         byte stream will have the expected/correct length (more or less). 
- *         Integrity checking (i.e. hashing, CRCs, etc.) must be performed
- *         afterwards on the decoded bytes, if necessary.
- * @note   Decoding is more or less proportional to message size and at
- *         least twice as fast as endoding.
+ *         This is a design decision. Integrity checking (i.e. hashing,
+ *         CRCs, etc.) must be performed afterwards on the decoded bytes,
+ *         if necessary.
  */
 size_t decodeCOBS_inplace(uint8_t *inptr, size_t inputlen) {
+    // re-use decodeCOBS()
     return decodeCOBS(inptr, inputlen, inptr, inputlen);
 }
