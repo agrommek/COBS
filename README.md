@@ -22,7 +22,7 @@ However, the code is pure C++. There is nothing in the code that prevents the li
 
 ### COBS encoding
 
-`encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t outlen, bool add_trailing_zero=true))` 
+`encodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t outlen, bool add_trailing_zero=true)`
 
 Use the function `encodeCOBS()` to encode bytes in the array `inptr` and save the result in array `outptr`. The buffer sizes are needed for error checking. The boolean argument `add_trailing_zero` adds a zero byte (i.e. a delimiter byte) to the end of the encoded bytes. Usually, the algorithm does not add this delimiter. However, we would not do COBS encoding if we wouldn't want to send the data over some un-delimited connection. This flag is there for practical convenience.
 
@@ -45,7 +45,7 @@ The function returns the number of bytes written to the output buffer. A number 
 
 ### COBS decoding in-place
 
-`size_t decodeCOBS(uint8_t *inptr, size_t inputlen`
+`size_t decodeCOBS(uint8_t *inptr, size_t inputlen)`
 
 Use the function `decodeCOBS_inplace()` to convert a buffer with COBS encoded bytes back to the original message and write the result back to the **same** buffer. his is always possible, as the size needed for the decoded message will *always* be at least one byte less then the encoded message. Do this if memory is at a premium and you don't need the encoded message any more.
 
