@@ -218,13 +218,19 @@ size_t decodeCOBS(const uint8_t *inptr, size_t inputlen, uint8_t *outptr, size_t
             code = end - inptr;
         }
         inptr++;
-        
-        // copy code-1 bytes from input to output
+        // copy (code-1) elements from inptr to outptr
         for (uint_fast8_t i=1; i < code; i++) {
             *outptr = *inptr;
             inptr++;
             outptr++;
         }
+        // Note: Using memmove is slower than looping on AVR and ARM 
+        // architectures used for Arduinos. The following code is left 
+        // in for documentation purposes only:
+        // memmove(outptr, inptr, code-1);
+        // inptr += (code-1);
+        // outptr += (code-1);
+
         // inptr now points either to...
         // ...the next non-zero code byte within the input--> ok, continue
         // ...a zero code byte --> trailing zero or error --> break here

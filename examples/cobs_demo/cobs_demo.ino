@@ -21,10 +21,16 @@ const size_t MESSAGE_SIZE = 64;
 // The message buffer is filled with pseudo-random bytes.
 // Chose the random seed so that the message contains some zero bytes
 // to better observer the effect of the COBS encoding.
-const uint32_t RANDOM_SEED = 1241;
+//const uint32_t RANDOM_SEED = 1252; // for AVR
+const uint32_t RANDOM_SEED = 1241; // for ARM
+
+// Use this value as the maximum generated value in randomly generated
+// message. The lower this value is chosen, the more zeros are contained
+// in the message.
+const uint8_t MAX_RANDOM_VALUE = 255;
 
 // define if you want to add a trailing zero byte or not
-const bool ADD_ZERO_BYTE = true;
+const bool ADD_ZERO_BYTE = false;
 
 // A little helper function to print out byte buffers in a readable format:
 // Print HEX numbers with leading zero, separated by space, 16 bytes in a row
@@ -69,7 +75,7 @@ void setup() {
     randomSeed(RANDOM_SEED);
     size_t number_of_zeros = 0;
     for (size_t i=0; i<message_buffer_size; i++) {
-        message_buffer[i] = random(0, 256);
+        message_buffer[i] = random(0, static_cast<uint32_t>(MAX_RANDOM_VALUE)+1);
         if (message_buffer[i] == 0) number_of_zeros++;
     }
 
