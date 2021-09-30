@@ -6,7 +6,7 @@ This library implements the COBS algorithm.
 
 As the name says, the algorithm does "byte stuffing". Byte stuffing means, that a byte in a stream or buffer is consistently and reversably replaced by another pattern. This is useful, for example, if one has to transmit messages over a stream-like protocol and wants/needs to sepearate messages by a delimiter. Candidates for that are plain serial protocols (RS-232, UART, etc.) and TCP. The problem with the delimiter approach: What if the delimiter can occur within the message itself? Byte stuffing algorithms solve that problem by replacing the "delimiting symbol" by other symbols at the cost of some overhead (both in terms of encoding/decoding time and number of bytes to transmit).
 
-For mor information on the COBS algorithm, take a look at the [original paper](http://www.stuartcheshire.org/papers/COBSforToN.pdf) or the [Wikipedia article](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing).
+For more information on the COBS algorithm, take a look at the [original paper](http://www.stuartcheshire.org/papers/COBSforToN.pdf) or the [Wikipedia article](https://en.wikipedia.org/wiki/Consistent_Overhead_Byte_Stuffing).
 
 ## Overhead
 
@@ -47,7 +47,7 @@ The function returns the number of bytes written to the output buffer. A number 
 
 `size_t decodeCOBS(uint8_t *inptr, size_t inputlen)`
 
-Use the function `decodeCOBS_inplace()` to convert a buffer with COBS encoded bytes back to the original message and write the result back to the **same** buffer. his is always possible, as the size needed for the decoded message will *always* be at least one byte less then the encoded message. Do this if memory is at a premium and you don't need the encoded message any more.
+Use the function `decodeCOBS_inplace()` to convert a buffer with COBS encoded bytes back to the original message and write the result back to the **same** buffer. This is always possible, as the size needed for the decoded message will *always* be at least one byte less then the encoded message. Do this if memory is at a premium and you don't need the encoded message any more.
 
 ### Helper functions
 
